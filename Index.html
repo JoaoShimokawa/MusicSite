@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark" data-font-size="normal" data-dyslexic="false" data-sensory="false">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harmonia Acessível - Player de Música Inclusivo</title>
+    <meta name="description" content="Plataforma de música totalmente acessível para pessoas autistas, surdas, cegas, não-verbais e daltônicas.">
+    
+    <!-- CSS Internal Stylesheet -->
+    <style>
+        :root {
+            /* Tema Padrão (Escuro Elegante) */
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --bg-hover: #475569;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --accent-primary: #38bdf8;
+            --accent-hover: #0284c7;
+            --accent-active: #0369a1;
+            --accent-contrast: #0f172a;
+            --border-color: #475569;
+            --focus-ring: #f59e0b;
+            --sensory-badge-low: #10b981;
+            --sensory-badge-med: #f59e0b;
+            --sensory-badge-high: #ef4444;
+            --canvas-wave: #38bdf8;
+            --canvas-bar: #818cf8;
+            --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-scale: 1rem;
+            --spacing-unit: 1rem;
+            --border-radius: 12px;
+            --transition-speed: 0.25s;
+        }
+
+        /* TEMA: ALTO CONTRASTE */
+        [data-theme="high-contrast"] {
+            --bg-primary: #000000;
+            --bg-secondary: #111111;
+            --bg-card: #222222;
+            --bg-hover: #ffff00;
+            --text-primary: #ffffff;
+            --text-secondary: #ffffff;
+            --text-muted: #e0e0e0;
+            --accent-primary: #ffff00;
+            --accent-hover: #ffd700;
+            --accent-active: #ffffff;
+            --accent-contrast: #000000;
+            --border-color: #ffffff;
+            --focus-ring: #00ffff;
+            --canvas-wave: #ffff00;
+            --canvas-bar: #00ffff;
+        }
+
+        /* TEMA: DEUTERANOPIA (Deficiência de Verde) */
+        [data-theme="deuteranopia"] {
+            --bg-primary: #0b192c;
+            --bg-secondary: #1e3e62;
+            --bg-card: #000000;
+            --bg-hover: #2b517e;
+            --text-primary: #ffffff;
+            --text-secondary: #e2e8f0;
+            --accent-primary: #ffc107;
+            --accent-hover: #e0a800;
+            --accent-contrast: #000000;
+            --border-color: #ffc107;
+            --focus-ring: #00bbf9;
+            --canvas-wave: #00bbf9;
+            --canvas-bar: #ffc107;
+        }
+
+        /* TEMA: PROTANOPIA (Deficiência de Vermelho) */
+        [data-theme="protanopia"] {
+            --bg-primary: #101820;
+            --bg-secondary: #1f2d3d;
+            --bg-card: #2c3e50;
+            --bg-hover: #3b536b;
+            --text-primary: #f4f5f7;
+            --text-secondary: #d1d5db;
+            --accent-primary: #00a8ff;
+            --accent-hover: #0086cc;
+            --accent-contrast: #ffffff;
+            --border-color: #fbc531;
+            --focus-ring: #fbc531;
+            --canvas-wave: #00a8ff;
+            --canvas-bar: #fbc531;
+        }
+
+        /* TEMA: TRITANOPIA (Deficiência de Azul) */
+        [data-theme="tritanopia"] {
+            --bg-primary: #191919;
+            --bg-secondary: #2d2d2d;
+            --bg-card: #3d3d3d;
+            --bg-hover: #4d4d4d;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --accent-primary: #ff4757;
+            --accent-hover: #e84118;
+            --accent-contrast: #ffffff;
+            --border-color: #2ed573;
+            --focus-ring: #2ed573;
+            --canvas-wave: #ff4757;
+            --canvas-bar: #2ed573;
+        }
+
+        /* TEMA: SENSORIAL CALMO (Cores Pastéis Suaves) */
+        [data-theme="sensory-soft"] {
+            --bg-primary: #f4f1ea;
+            --bg-secondary: #e8e3d9;
+            --bg-card: #ddd6c8;
+            --bg-hover: #d0c7b5;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --accent-primary: #76a5af;
+            --accent-hover: #5e8a93;
+            --accent-contrast: #ffffff;
+            --border-color: #b8af9e;
+            --focus-ring: #c08497;
+            --canvas-wave: #76a5af;
+            --canvas-bar: #c08497;
+        }
+
+        /* Ajuste de Tamanho de Fonte */
+        [data-font-size="small"] { --font-scale: 0.875rem; }
+        [data-font-size="normal"] { --font-scale: 1rem; }
+        [data-font-size="large"] { --font-scale: 1.18rem; }
+        [data-font-size="xlarge"] { --font-scale: 1.35rem; }
+
+        /* Estilo Dislexia Friendly */
+        [data-dyslexic="true"] {
+            --font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif !important;
+            letter-spacing: 0.08em !important;
+            word-spacing: 0.15em !important;
+            line-height: 1.8 !important;
+        }
+
+        /* Modo Sensorial (Animações Desativadas e Simplificação) */
+        [data-sensory="true"] *,
+        [data-sensory="true"] *::before,
+        [data-sensory="true"] *::after {
+            animation: none !important;
+            transition: none !important;
+            box-shadow: none !important;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            font-size: var(--font-scale);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Foco Visível para Teclado e Leitores */
+        :focus-visible {
+            outline: 4px solid var(--focus-ring) !important;
+            outline-offset: 3px !important;
+            border-radius: 4px;
+        }
+
+        /* Skip Links (Navegação Rápida por Teclado) */
+        .skip-links {
+            position: absolute;
+            top: -100px;
+            left: 10px;
+            z-index: 9999;
+        }
+
+        .skip-links a {
+            background: var(--accent-primary);
+            color: var(--accent-contrast);
+            padding: 12px 20px;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 8px;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .skip-links a:focus {
+            position: absolute;
+            top: 110px;
+        }
+
+        /* Região com suporte a leitores de tela invisível visualmente */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        header {
+            background-color: var(--bg-secondary);
+            border-bottom: 2px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--accent-primary);
+            color: var(--accent-contrast);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.4rem;
+            border: 2px solid var(--border-color);
+        }
+
+        .logo-title h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .logo-title span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        /* Toolbar de Acessibilidade no Cabeçalho */
+        .top-a11y-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+            padding: 0.6rem 1rem;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-primary);
+            color: var(--accent-contrast);
+            border-color: var(--accent-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-active {
+            border-color: var(--focus-ring);
+            background-color: var(--bg-hover);
+        }
+
+        /* Layout Principal */
+        .main-container {
+            display: grid;
+            grid-template-columns: 320px 1fr 340px;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            flex: 1;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 300px 1fr;
+            }
+            .chat-sidebar {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 850px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            .chat-sidebar {
+                grid-column: span 1;
+            }
+        }
+
+        /* Seções e Cards */
+        .panel {
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.75rem;
+        }
+
+        .panel-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        /* Biblioteca de Músicas */
+        .filter-group {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+        }
+
+        .chip-filter {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .chip-filter.active {
+            background-color: var(--accent-primary);
+            color: var(--accent-contrast);
+            border-color: var(--accent-primary);
+            font-weight: bold;
+        }
+
+        .track-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            max-height: 520px;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+
+        .track-item {
+            background-color: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+
+        .track-item:hover {
+            background-color: var(--bg-hover);
+        }
+
+        .track-item.playing {
+            border-color: var(--accent-primary);
+            background-color: var(--bg-hover);
+        }
+
+        .track-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            overflow: hidden;
+        }
+
+        .track-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-artist {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .sensory-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .sensory-low { background-color: var(--sensory-badge-low); color: #000; }
+        .sensory-med { background-color: var(--sensory-badge-med); color: #000; }
+        .sensory-high { background-color: var(--sensory-badge-high); color: #fff; }
+
+        /* Player Central */
+        .player-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1.25rem;
+        }
+
+        .cover-art-wrapper {
+            width: 220px;
+            height: 220px;
+            border-radius: var(--border-radius);
+            border: 3px solid var(--border-color);
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-hover));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .cover-symbol {
+            font-size: 4rem;
+        }
+
+        .visualizer-container {
+            width: 100%;
+            height: 140px;
+            background-color: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas#audio-visualizer {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .visualizer-status {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            font-size: 0.75rem;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Controles do Player */
+        .player-controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .btn-control {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background-color: var(--bg-card);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .btn-control:hover {
+            background-color: var(--bg-hover);
+        }
+
+        .btn-play-large {
+            width: 68px;
+            height: 68px;
+            font-size: 1.6rem;
+            background-color: var(--accent-primary);
+            color: var(--accent-contrast);
+            border-color: var(--accent-primary);
+        }
+
+        .btn-play-large:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Sliders de Progresso e Volume */
+        .slider-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 12px;
+            accent-color: var(--accent-primary);
+            cursor: pointer;
+            border-radius: 6px;
+            background-color: var(--bg-card);
+        }
+
+        /* Letras e Subtítulos em Tempo Real */
+        .lyrics-box {
+            width: 100%;
+            background-color: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            min-height: 110px;
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lyric-line {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text-secondary);
+            padding: 0.2rem 0;
+            transition: color 0.2s, font-size 0.2s;
+        }
+
+        .lyric-line.active {
+            color: var(--accent-primary);
+            font-size: 1.25rem;
+            text-decoration: underline;
+        }
+
+        /* Chat e Assistente Não-Verbal */
+        .chat-history {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            height: 280px;
+            overflow-y: auto;
+            background-color: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 0.75rem;
+        }
+
+        .chat-bubble {
+            padding: 0.6rem 0.9rem;
+            border-radius: 12px;
+            max-width: 85%;
+            font-size: 0.9rem;
+            word-wrap: break-word;
+        }
+
+        .chat-user {
+            background-color: var(--accent-primary);
+            color: var(--accent-contrast);
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+            font-weight: 600;
+        }
+
+        .chat-bot {
+            background-color: var(--bg-hover);
+            color: var(--text-primary);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            border: 1px solid var(--border-color);
+        }
+
+        .quick-reactions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .btn-chip-action {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.35rem 0.6rem;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .btn-chip-action:hover {
+            background-color: var(--bg-hover);
+            border-color: var(--accent-primary);
+        }
+
+        .chat-input-form {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            background-color: var(--bg-card);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.6rem;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+        }
+
+        /* Painel Flutuante / Expansível de Acessibilidade */
+        .a11y-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
+        }
+
+        .a11y-modal.hidden {
+            display: none !important;
+        }
+
+        .modal-content {
+            background-color: var(--bg-secondary);
+            border: 3px solid var(--border-color);
+            border-radius: var(--border-radius);
+            max-width: 650px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.75rem;
+        }
+
+        .grid-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .option-group label {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        select, input[type="text"] {
+            background-color: var(--bg-card);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.6rem;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+        }
+
+        /* Toasts e Alertas Visuais */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast-alert {
+            background-color: var(--accent-primary);
+            color: var(--accent-contrast);
+            padding: 0.8rem 1.2rem;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Rodapé */
+        footer {
+            background-color: var(--bg-secondary);
+            border-top: 2px solid var(--border-color);
+            padding: 1.25rem;
+            text-align: center;
+            margin-top: auto;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Skip Links para Navegação Rápida -->
+    <nav class="skip-links" aria-label="Atalhos de Navegação Rápida">
+        <a href="#main-player">Ir para o Player de Música</a>
+        <a href="#track-library">Ir para a Biblioteca de Músicas</a>
+        <a href="#chat-assistant">Ir para o Assistente Não-Verbal</a>
+        <a href="#btn-open-a11y">Ir para Configurações de Acessibilidade</a>
+    </nav>
+
+    <!-- Região Live ARIA para Anúncios ao Leitor de Tela (Cegos) -->
+    <div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true">
+        Bem-vindo ao Harmonia Acessível.
+    </div>
+
+    <!-- Cabeçalho Principal -->
+    <header role="banner">
+        <div class="logo-container">
+            <div class="logo-icon" aria-hidden="true">🎵</div>
+            <div class="logo-title">
+                <h1>Harmonia Acessível</h1>
+                <span>Música Sem Barreiras para Todos</span>
+            </div>
+        </div>
+
+        <div class="top-a11y-toolbar" role="toolbar" aria-label="Ferramentas Rápidas de Acessibilidade">
+            <button id="btn-sensory-toggle" class="btn" aria-pressed="false" title="Alternar Modo Sensorial Calmo para Autismo">
+                <span aria-hidden="true">🧠</span>
+                <span>Modo Sensorial</span>
+            </button>
+
+            <button id="btn-open-a11y" class="btn btn-primary" title="Abrir Painel Completo de Acessibilidade (Atalho Alt + A)">
+                <span aria-hidden="true">♿</span>
+                <span>Acessibilidade (Alt+A)</span>
+            </button>
+
+            <button id="btn-open-shortcuts" class="btn" title="Ver Atalhos do Teclado (Atalho Shift + ?)">
+                <span aria-hidden="true">⌨️</span>
+                <span class="sr-only">Atalhos do Teclado</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal de 3 Colunas -->
+    <main class="main-container" id="main-content" role="main">
+
+        <!-- COLUNA 1: Biblioteca de Músicas com Filtros -->
+        <section class="panel" id="track-library" aria-labelledby="heading-library">
+            <div class="panel-header">
+                <h2 id="heading-library" class="panel-title">
+                    <span aria-hidden="true">📚</span> Biblioteca
+                </h2>
+                <span id="track-count" class="sensory-badge sensory-low">5 Faixas</span>
+            </div>
+
+            <!-- Filtros por Gênero e Nível Sensorial -->
+            <div>
+                <p class="sr-only">Filtrar músicas por tipo de estímulo:</p>
+                <div class="filter-group" role="group" aria-label="Filtro de Faixas">
+                    <button class="chip-filter active" data-filter="all">Todas</button>
+                    <button class="chip-filter" data-filter="low">Calmas 🟢</button>
+                    <button class="chip-filter" data-filter="lofi">Lo-Fi</button>
+                    <button class="chip-filter" data-filter="piano">Piano</button>
+                    <button class="chip-filter" data-filter="synth">Synth</button>
+                </div>
+            </div>
+
+            <!-- Lista de Músicas -->
+            <ul class="track-list" id="playlist-container" role="listbox" aria-label="Lista de faixas de áudio disponíveis">
+                <!-- Preenchido via JS -->
+            </ul>
+        </section>
+
+        <!-- COLUNA 2: Player Principal de Áudio e Visualizador -->
+        <section class="panel player-main" id="main-player" aria-labelledby="heading-player">
+            <div class="panel-header" style="width: 100%;">
+                <h2 id="heading-player" class="panel-title">
+                    <span aria-hidden="true">🎧</span> Reproduzindo Agora
+                </h2>
+                <span id="badge-sensory-level" class="sensory-badge sensory-low" title="Intensidade Sensorial: Baixa">Estímulo: Baixo 🟢</span>
+            </div>
+
+            <!-- Capa Tátil/Visual do Álbum -->
+            <div class="cover-art-wrapper" id="cover-art">
+                <div class="cover-symbol" id="track-icon" aria-hidden="true">🎹</div>
+                <h3 id="current-title" style="font-size: 1.1rem; margin-top: 0.5rem; color: var(--text-primary);">Piano Suave</h3>
+                <p id="current-artist" style="font-size: 0.85rem; color: var(--text-muted);">Harmonia Relaxe</p>
+            </div>
+
+            <!-- Visualizador de Som em Tempo Real para Surdos e Deficientes Auditivos -->
+            <div class="visualizer-container" aria-label="Visualizador gráfico do som em tempo real">
+                <canvas id="audio-visualizer" width="500" height="140"></canvas>
+                <div class="visualizer-status" id="visualizer-label">Ondas de Frequência (Ativo)</div>
+            </div>
+
+            <!-- Slider de Progresso da Música -->
+            <div class="slider-container">
+                <div class="time-display">
+                    <span id="time-current">0:00</span>
+                    <span id="time-total">0:00</span>
+                </div>
+                <label for="seek-slider" class="sr-only">Barra de progresso da música</label>
+                <input type="range" id="seek-slider" min="0" max="100" value="0" step="0.1" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            </div>
+
+            <!-- Controles do Player -->
+            <div class="player-controls-row" role="region" aria-label="Controles de Reprodução">
+                <button class="btn-control" id="btn-prev" title="Faixa Anterior (Seta Esquerda)" aria-label="Música Anterior">⏮️</button>
+                <button class="btn-control btn-play-large" id="btn-play" title="Tocar ou Pausar (Barra de Espaço)" aria-label="Tocar Músicas">▶️</button>
+                <button class="btn-control" id="btn-next" title="Próxima Faixa (Seta Direita)" aria-label="Próxima Música">⏭️</button>
+                <button class="btn-control" id="btn-mute" title="Ativar ou Desativar Som (Tecla M)" aria-label="Silenciar Áudio">🔊</button>
+            </div>
+
+            <!-- Controle de Volume com Acessibilidade -->
+            <div class="slider-container" style="max-width: 250px;">
+                <div class="time-display">
+                    <span>Volume: <strong id="volume-value-text">80%</strong></span>
+                </div>
+                <label for="volume-slider" class="sr-only">Controle de volume do áudio</label>
+                <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.8">
+            </div>
+
+            <!-- Legendas / Subtítulos e Letra Sincronizada para Surdos -->
+            <div class="lyrics-box" aria-live="polite" aria-label="Letra e Subtítulos em Tempo Real">
+                <p id="lyric-display" class="lyric-line active">Tocando acordes suaves de piano para relaxamento...</p>
+            </div>
+        </section>
+
+        <!-- COLUNA 3: Assistente Não-Verbal / Comunicação por Texto -->
+        <section class="panel chat-sidebar" id="chat-assistant" aria-labelledby="heading-chat">
+            <div class="panel-header">
+                <h2 id="heading-chat" class="panel-title">
+                    <span aria-hidden="true">💬</span> Assistente Não-Verbal
+                </h2>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">
+                Faça pedidos de músicas, dê feedback ou comunique-se via texto sem precisar falar.
+            </p>
+
+            <!-- Histórico de Mensagens do Chat -->
+            <div class="chat-history" id="chat-history" role="log" aria-live="polite" aria-label="Histórico de mensagens">
+                <div class="chat-bubble chat-bot">
+                    Olá! Como posso ajudar você a curtir a sua música hoje?
+                </div>
+            </div>
+
+            <!-- Ações Rápidas Pré-digitadas para Pessoas Não-Verbais -->
+            <div class="quick-reactions" aria-label="Respostas rápidas pré-digitadas">
+                <button class="btn-chip-action" data-msg="Gostei muito desta música!">👍 Gostei!</button>
+                <button class="btn-chip-action" data-msg="Pode tocar algo mais calmo?">🧘 Mais calmo</button>
+                <button class="btn-chip-action" data-msg="Mude o tema de cores por favor.">🎨 Mudar cor</button>
+                <button class="btn-chip-action" data-msg="Preciso de ajuda com os atalhos.">❓ Ajuda</button>
+            </div>
+
+            <!-- Formulário de Envio de Texto -->
+            <form class="chat-input-form" id="chat-form">
+                <label for="chat-text-input" class="sr-only">Digite sua mensagem para o assistente</label>
+                <input type="text" id="chat-text-input" class="chat-input" placeholder="Digite sua mensagem aqui..." autocomplete="off">
+                <button type="submit" class="btn btn-primary" aria-label="Enviar mensagem de texto">Enviar</button>
+            </form>
+        </section>
+
+    </main>
+
+    <!-- MODAL: Configurações Completas de Acessibilidade -->
+    <div id="modal-a11y" class="a11y-modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-a11y-title">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-a11y-title" class="panel-title">⚙️ Painel de Acessibilidade</h2>
+                <button id="btn-close-a11y" class="btn" aria-label="Fechar painel de acessibilidade">✕ Fechar</button>
+            </div>
+
+            <div class="grid-options">
+                <!-- Seletor de Cores para Daltônicos -->
+                <div class="option-group">
+                    <label for="select-theme">Paleta de Cores (Daltonismo & Contraste):</label>
+                    <select id="select-theme">
+                        <option value="dark">Escuro Padrão (Cyan/Roxo)</option>
+                        <option value="high-contrast">Alto Contraste (Preto e Amarelo)</option>
+                        <option value="deuteranopia">Deuteranopia (Sem Verde)</option>
+                        <option value="protanopia">Protanopia (Sem Vermelho)</option>
+                        <option value="tritanopia">Tritanopia (Sem Azul)</option>
+                        <option value="sensory-soft">Sensorial Calmo (Tons Pastéis)</option>
+                    </select>
+                </div>
+
+                <!-- Tamanho do Texto -->
+                <div class="option-group">
+                    <label for="select-font-size">Tamanho da Fonte:</label>
+                    <select id="select-font-size">
+                        <option value="small">Pequena</option>
+                        <option value="normal" selected>Normal</option>
+                        <option value="large">Grande</option>
+                        <option value="xlarge">Extra Grande</option>
+                    </select>
+                </div>
+
+                <!-- Fonte para Dislexia -->
+                <div class="option-group">
+                    <label for="select-dyslexia">Fonte para Dislexia:</label>
+                    <select id="select-dyslexia">
+                        <option value="false">Padrão Legível</option>
+                        <option value="true">Fonte Adaptada (Espaçada)</option>
+                    </select>
+                </div>
+
+                <!-- Estilo do Visualizador -->
+                <div class="option-group">
+                    <label for="select-visualizer-type">Estilo do Visualizador (Surdos):</label>
+                    <select id="select-visualizer-type">
+                        <option value="bars">Barras de Equalizador</option>
+                        <option value="wave">Onda Sonora (Osciloscópio)</option>
+                        <option value="pulse">Círculo Pulsante Sensorial</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="margin-top: 1rem; padding: 1rem; background: var(--bg-card); border-radius: var(--border-radius);">
+                <h3>ℹ️ Recursos Especiais Ativos:</h3>
+                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                    <li><strong>Sem Autoplay:</strong> Nenhuma música toca sem sua ação explícita.</li>
+                    <li><strong>Live Region:</strong> Leitores de tela narram alterações de música e volume.</li>
+                    <li><strong>Atalhos de Teclado:</strong> Navegue sem usar o mouse.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Atalhos do Teclado -->
+    <div id="modal-shortcuts" class="a11y-modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-shortcuts-title">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-shortcuts-title" class="panel-title">⌨️ Atalhos do Teclado Global</h2>
+                <button id="btn-close-shortcuts" class="btn" aria-label="Fechar modal de atalhos">✕ Fechar</button>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="border-bottom: 2px solid var(--border-color);">
+                        <th style="padding: 0.5rem;">Tecla</th>
+                        <th style="padding: 0.5rem;">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 0.5rem;"><code>Barra de Espaço</code></td>
+                        <td style="padding: 0.5rem;">Tocar / Pausar Música</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 0.5rem;"><code>Tecla M</code></td>
+                        <td style="padding: 0.5rem;">Ativar / Desativar Mudo</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 0.5rem;"><code>Seta para Direita</code></td>
+                        <td style="padding: 0.5rem;">Próxima Música</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 0.5rem;"><code>Seta para Esquerda</code></td>
+                        <td style="padding: 0.5rem;">Música Anterior</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 0.5rem;"><code>Seta para Cima / Baixo</code></td>
+                        <td style="padding: 0.5rem;">Aumentar / Diminuir Volume</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 0.5rem;"><code>Alt + A</code></td>
+                        <td style="padding: 0.5rem;">Abrir Painel de Acessibilidade</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem;"><code>Shift + ?</code></td>
+                        <td style="padding: 0.5rem;">Exibir esta lista de atalhos</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Container de Notificações Toast -->
+    <div id="toast-container" class="toast-container" aria-live="assertive"></div>
+
+    <!-- Rodapé -->
+    <footer role="contentinfo">
+        <p><strong>Harmonia Acessível</strong> © 2026 - Plataforma inclusiva de música projetada para acessibilidade universal.</p>
+    </footer>
+
+    <!-- JAVASCRIPT LÓGICA COMPLETA DA APLICAÇÃO -->
+    <script>
+        /* ==========================================================================
+           1. ESTADO DA APLICAÇÃO E BANCO DE DADOS DE MÚSICAS SINTETIZADAS
+           ========================================================================== */
+        const APP_STATE = {
+            currentTrackIndex: 0,
+            isPlaying: false,
+            isMuted: false,
+            volume: 0.8,
+            theme: 'dark',
+            fontSize: 'normal',
+            isDyslexic: false,
+            isSensoryMode: false,
+            visualizerMode: 'bars', // 'bars', 'wave', 'pulse'
+            audioCtx: null,
+            analyser: null,
+            synthInterval: null
+        };
+
+        // Faixas de música geradas via Sintetizador Web Audio API (sem dependência de arquivos externos!)
+        const TRACK_DATABASE = [
+            {
+                id: 0,
+                title: "Piano Suave de Outono",
+                artist: "Harmonia Relaxe",
+                genre: "piano",
+                sensoryLevel: "low",
+                sensoryBadgeText: "Estímulo: Baixo 🟢",
+                icon: "🎹",
+                tempoBpm: 60,
+                notes: [261.63, 329.63, 392.00, 523.25, 392.00, 329.63], // C4, E4, G4, C5...
+                lyrics: [
+                    { time: 0, text: "🎵 [Acordes doces de piano iniciam suavemente]" },
+                    { time: 4, text: "🍃 Sinta a melodia leve acalmando sua mente..." },
+                    { time: 8, text: "🎹 Notas harmônicas fluem em ritmo lento..." },
+                    { time: 12, text: "✨ Paz e previsibilidade para o seu momento." }
+                ]
+            },
+            {
+                id: 1,
+                title: "Ondas Marinhas Lo-Fi",
+                artist: "Calm Beats",
+                genre: "lofi",
+                sensoryLevel: "low",
+                sensoryBadgeText: "Estímulo: Baixo 🟢",
+                icon: "🌊",
+                tempoBpm: 55,
+                notes: [196.00, 246.94, 293.66, 349.23], // G3, B3, D4, F4
+                lyrics: [
+                    { time: 0, text: "🌊 [Sintetizador com textura de mar sereno]" },
+                    { time: 4, text: "🎧 Beat aveludado e acolhedor..." },
+                    { time: 8, text: "☁️ Respiração profunda no ritmo da onda..." },
+                    { time: 12, text: "💙 Tudo tranquilo e no seu próprio tempo." }
+                ]
+            },
+            {
+                id: 2,
+                title: "Sintetizador Retrô Suave",
+                artist: "Synth Mind",
+                genre: "synth",
+                sensoryLevel: "med",
+                sensoryBadgeText: "Estímulo: Médio 🟡",
+                icon: "⚡",
+                tempoBpm: 75,
+                notes: [220.00, 277.18, 329.63, 440.00], // A3, C#4, E4, A4
+                lyrics: [
+                    { time: 0, text: "⚡ [Onda senoidal calorosa de synthwave]" },
+                    { time: 4, text: "🔮 Pulso rítmico estável e constante..." },
+                    { time: 8, text: "🌌 Frequência estéreo que envolve os ouvidos..." },
+                    { time: 12, text: "🎶 Transição suave e relaxante." }
+                ]
+            },
+            {
+                id: 3,
+                title: "Violão Acústico ao Pôr do Sol",
+                artist: "Acústico Livre",
+                genre: "piano",
+                sensoryLevel: "low",
+                sensoryBadgeText: "Estímulo: Baixo 🟢",
+                icon: "🎸",
+                tempoBpm: 65,
+                notes: [146.83, 220.00, 293.66, 369.99], // D3, A3, D4, F#4
+                lyrics: [
+                    { time: 0, text: "🎸 [Dedilhado limpo de violão acústico]" },
+                    { time: 4, text: "🌅 Calor do entardecer através do som..." },
+                    { time: 8, text: "🌾 Melodia simples, repetitiva e confortável..." },
+                    { time: 12, text: "🕊️ Sentimento de segurança e acolhimento." }
+                ]
+            },
+            {
+                id: 4,
+                title: "Pulsos Synth Otimistas",
+                artist: "Neon Chill",
+                genre: "synth",
+                sensoryLevel: "high",
+                sensoryBadgeText: "Estímulo: Moderado 🔴",
+                icon: "🚀",
+                tempoBpm: 90,
+                notes: [261.63, 329.63, 392.00, 493.88, 523.25], // C4, E4, G4, B4, C5
+                lyrics: [
+                    { time: 0, text: "🚀 [Batida mais viva com sintetizador energizante]" },
+                    { time: 4, text: "⭐ Ritmo dinâmico sem sobressaltos repentinos..." },
+                    { time: 8, text: "🌈 Arpejos cintilantes preenchem o espaço..." },
+                    { time: 12, text: "🎵 Energia equilibrada e inspiradora!" }
+                ]
+            }
+        ];
+
+        /* ==========================================================================
+           2. SINTETIZADOR DE ÁUDIO WEB AUDIO API (Sons Procedurais sem dependência externa)
+           ========================================================================== */
+        class WebAudioSynthPlayer {
+            constructor() {
+                this.ctx = null;
+                this.analyser = null;
+                this.currentNoteIndex = 0;
+                this.timer = null;
+                this.trackDuration = 16; // segundos simulados por ciclo
+                this.elapsedTime = 0;
+                this.timeCounterInterval = null;
+            }
+
+            initContext() {
+                if (!this.ctx) {
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContextClass();
+                    this.analyser = this.ctx.createAnalyser();
+                    this.analyser.fftSize = 64;
+                    APP_STATE.audioCtx = this.ctx;
+                    APP_STATE.analyser = this.analyser;
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playTrack(track) {
+                this.initContext();
+                this.stop();
+
+                const intervalMs = (60 / track.tempoBpm) * 1000;
+                this.elapsedTime = 0;
+
+                // Loop Sintetizador de Notas
+                this.timer = setInterval(() => {
+                    if (APP_STATE.isMuted) return;
+
+                    const freq = track.notes[this.currentNoteIndex % track.notes.length];
+                    this.playSynthTone(freq);
+                    this.currentNoteIndex++;
+                }, intervalMs);
+
+                // Contador de Tempo e Atualização da Interface
+                this.timeCounterInterval = setInterval(() => {
+                    this.elapsedTime += 0.5;
+                    if (this.elapsedTime > this.trackDuration) {
+                        this.elapsedTime = 0; // Loop contínuo da música
+                    }
+                    updatePlaybackProgress(this.elapsedTime, this.trackDuration);
+                    updateLyrics(track, this.elapsedTime);
+                }, 500);
+
+                APP_STATE.isPlaying = true;
+                updatePlayButtonUI();
+                announceScreenReader(`Tocando agora: ${track.title} de ${track.artist}`);
+            }
+
+            playSynthTone(freq) {
+                if (!this.ctx) return;
+
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'triangle'; // Som suave
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+
+                const vol = APP_STATE.isMuted ? 0 : APP_STATE.volume;
+                gain.gain.setValueAtTime(vol * 0.3, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.8);
+
+                osc.connect(gain);
+                gain.connect(this.analyser);
+                this.analyser.connect(this.ctx.destination);
+
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.8);
+            }
+
+            stop() {
+                if (this.timer) clearInterval(this.timer);
+                if (this.timeCounterInterval) clearInterval(this.timeCounterInterval);
+                APP_STATE.isPlaying = false;
+                updatePlayButtonUI();
+            }
+        }
+
+        const audioEngine = new WebAudioSynthPlayer();
+
+        /* ==========================================================================
+           3. VISUALIZADOR GRÁFICO DE ÁUDIO NO CANVAS (Para Surdos e Deficientes Auditivos)
+           ========================================================================== */
+        const canvas = document.getElementById('audio-visualizer');
+        const canvasCtx = canvas.getContext('2d');
+
+        function renderVisualizer() {
+            requestAnimationFrame(renderVisualizer);
+
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Limpa o Canvas
+            canvasCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg-card').trim() || '#334155';
+            canvasCtx.fillRect(0, 0, width, height);
+
+            if (!APP_STATE.analyser || !APP_STATE.isPlaying) {
+                // Desenhar linha estática neutra se pausado
+                canvasCtx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || '#94a3b8';
+                canvasCtx.lineWidth = 2;
+                canvasCtx.beginPath();
+                canvasCtx.moveTo(0, height / 2);
+                canvasCtx.lineTo(width, height / 2);
+                canvasCtx.stroke();
+                return;
+            }
+
+            const bufferLength = APP_STATE.analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            APP_STATE.analyser.getByteFrequencyData(dataArray);
+
+            const waveColor = getComputedStyle(document.documentElement).getPropertyValue('--canvas-wave').trim() || '#38bdf8';
+            const barColor = getComputedStyle(document.documentElement).getPropertyValue('--canvas-bar').trim() || '#818cf8';
+
+            if (APP_STATE.visualizerMode === 'bars') {
+                // MODO 1: BARRAS DE EQUALIZADOR
+                const barWidth = (width / bufferLength) * 2.5;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const barHeight = (dataArray[i] / 255) * height;
+                    canvasCtx.fillStyle = barColor;
+                    canvasCtx.fillRect(x, height - barHeight, barWidth - 2, barHeight);
+                    x += barWidth;
+                }
+            } else if (APP_STATE.visualizerMode === 'wave') {
+                // MODO 2: OSCILOSCÓPIO / ONDA SONORA
+                canvasCtx.lineWidth = 4;
+                canvasCtx.strokeStyle = waveColor;
+                canvasCtx.beginPath();
+
+                const sliceWidth = width / bufferLength;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const v = dataArray[i] / 128.0;
+                    const y = (v * height) / 2;
+
+                    if (i === 0) canvasCtx.moveTo(x, y);
+                    else canvasCtx.lineTo(x, y);
+
+                    x += sliceWidth;
+                }
+
+                canvasCtx.lineTo(width, height / 2);
+                canvasCtx.stroke();
+            } else if (APP_STATE.visualizerMode === 'pulse') {
+                // MODO 3: CÍRCULO PULSANTE SENSORIAL
+                let sum = 0;
+                for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
+                const average = sum / bufferLength;
+
+                const radius = 20 + (average / 255) * 40;
+                canvasCtx.beginPath();
+                canvasCtx.arc(width / 2, height / 2, radius, 0, 2 * Math.PI);
+                canvasCtx.fillStyle = waveColor;
+                canvasCtx.fill();
+                canvasCtx.lineWidth = 3;
+                canvasCtx.strokeStyle = barColor;
+                canvasCtx.stroke();
+            }
+        }
+
+        // Inicia o loop de animação do canvas
+        renderVisualizer();
+
+        /* ==========================================================================
+           4. RENDERIZAÇÃO DA INTERFACE E CONTROLES DO PLAYER
+           ========================================================================== */
+        const playlistContainer = document.getElementById('playlist-container');
+
+        function renderPlaylist(filter = 'all') {
+            playlistContainer.innerHTML = '';
+
+            const filteredTracks = TRACK_DATABASE.filter(t => {
+                if (filter === 'all') return true;
+                if (filter === 'low') return t.sensoryLevel === 'low';
+                return t.genre === filter;
+            });
+
+            filteredTracks.forEach((track) => {
+                const li = document.createElement('li');
+                li.className = `track-item ${track.id === APP_STATE.currentTrackIndex ? 'playing' : ''}`;
+                li.setAttribute('role', 'option');
+                li.setAttribute('aria-selected', track.id === APP_STATE.currentTrackIndex);
+                li.setAttribute('tabindex', '0');
+
+                li.innerHTML = `
+                    <div class="track-info">
+                        <span class="track-title">${track.icon} ${track.title}</span>
+                        <span class="track-artist">${track.artist}</span>
+                    </div>
+                    <span class="sensory-badge sensory-${track.sensoryLevel}">${track.sensoryBadgeText}</span>
+                `;
+
+                // Eventos de Clique e Teclado
+                const selectTrackAction = () => {
+                    APP_STATE.currentTrackIndex = track.id;
+                    updatePlayerTrackUI();
+                    audioEngine.playTrack(TRACK_DATABASE[APP_STATE.currentTrackIndex]);
+                    renderPlaylist(filter);
+                };
+
+                li.addEventListener('click', selectTrackAction);
+                li.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selectTrackAction();
+                    }
+                });
+
+                playlistContainer.appendChild(li);
+            });
+
+            document.getElementById('track-count').textContent = `${filteredTracks.length} Faixas`;
+        }
+
+        function updatePlayerTrackUI() {
+            const track = TRACK_DATABASE[APP_STATE.currentTrackIndex];
+            document.getElementById('current-title').textContent = track.title;
+            document.getElementById('current-artist').textContent = track.artist;
+            document.getElementById('track-icon').textContent = track.icon;
+
+            const badge = document.getElementById('badge-sensory-level');
+            badge.className = `sensory-badge sensory-${track.sensoryLevel}`;
+            badge.textContent = track.sensoryBadgeText;
+
+            document.getElementById('time-total').textContent = "0:16";
+        }
+
+        function updatePlayButtonUI() {
+            const btn = document.getElementById('btn-play');
+            if (APP_STATE.isPlaying) {
+                btn.textContent = '⏸️';
+                btn.setAttribute('aria-label', 'Pausar música');
+            } else {
+                btn.textContent = '▶️';
+                btn.setAttribute('aria-label', 'Tocar música');
+            }
+        }
+
+        function updatePlaybackProgress(elapsed, total) {
+            const percentage = (elapsed / total) * 100;
+            const seekSlider = document.getElementById('seek-slider');
+            seekSlider.value = percentage;
+            seekSlider.setAttribute('aria-valuenow', Math.round(percentage));
+
+            const mins = Math.floor(elapsed / 60);
+            const secs = Math.floor(elapsed % 60).toString().padStart(2, '0');
+            document.getElementById('time-current').textContent = `${mins}:${secs}`;
+        }
+
+        function updateLyrics(track, elapsedTime) {
+            const lyricDisplay = document.getElementById('lyric-display');
+            const matchedLyric = track.lyrics.slice().reverse().find(l => elapsedTime >= l.time);
+
+            if (matchedLyric) {
+                lyricDisplay.textContent = matchedLyric.text;
+            }
+        }
+
+        /* ==========================================================================
+           5. ASSISTENTE NÃO-VERBAL / CHAT INTERATIVO POR TEXTO
+           ========================================================================== */
+        const chatHistory = document.getElementById('chat-history');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-text-input');
+
+        function appendChatMessage(sender, message) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-bubble ${sender === 'user' ? 'chat-user' : 'chat-bot'}`;
+            msgDiv.textContent = message;
+            chatHistory.appendChild(msgDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            announceScreenReader(`${sender === 'user' ? 'Você' : 'Assistente'}: ${message}`);
+        }
+
+        function handleUserChatMessage(text) {
+            if (!text.trim()) return;
+            appendChatMessage('user', text);
+
+            setTimeout(() => {
+                const lower = text.toLowerCase();
+                let botResponse = "Recebi sua mensagem! Como posso ajustar o ambiente para você?";
+
+                if (lower.includes('gostei')) {
+                    botResponse = "Que ótimo! Vou manter faixas com estilo semelhante salvas para você. 😊";
+                } else if (lower.includes('calmo') || lower.includes('calma')) {
+                    botResponse = "Entendido! Alternando para faixas com baixo estímulo sensorial. 🧘";
+                    renderPlaylist('low');
+                } else if (lower.includes('cor') || lower.includes('tema')) {
+                    botResponse = "Você pode mudar as cores abrindo o painel de Acessibilidade (Alt + A) ou informando seu tipo de daltonismo!";
+                } else if (lower.includes('ajuda')) {
+                    botResponse = "Pressione Barra de Espaço para Tocar/Pausar, Setas para Mudar de Música e Alt+A para abrir as opções!";
+                }
+
+                appendChatMessage('bot', botResponse);
+            }, 600);
+        }
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleUserChatMessage(chatInput.value);
+            chatInput.value = '';
+        });
+
+        // Chips de Ação Rápida
+        document.querySelectorAll('.btn-chip-action').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const msg = btn.getAttribute('data-msg');
+                handleUserChatMessage(msg);
+            });
+        });
+
+        /* ==========================================================================
+           6. GERENCIADOR DE ACESSIBILIDADE E ATALHOS DE TECLADO
+           ========================================================================== */
+        const announcer = document.getElementById('sr-announcer');
+
+        function announceScreenReader(message) {
+            announcer.textContent = '';
+            setTimeout(() => {
+                announcer.textContent = message;
+            }, 50);
+            showToast(message);
+        }
+
+        function showToast(message) {
+            if (APP_STATE.isSensoryMode) return; // Evita pop-ups no modo sensorial calmo
+
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast-alert';
+            toast.innerHTML = `<span>📢</span> <span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Alternador de Modo Sensorial (Autismo)
+        const sensoryBtn = document.getElementById('btn-sensory-toggle');
+        sensoryBtn.addEventListener('click', () => {
+            APP_STATE.isSensoryMode = !APP_STATE.isSensoryMode;
+            document.documentElement.setAttribute('data-sensory', APP_STATE.isSensoryMode);
+            sensoryBtn.setAttribute('aria-pressed', APP_STATE.isSensoryMode);
+
+            if (APP_STATE.isSensoryMode) {
+                document.documentElement.setAttribute('data-theme', 'sensory-soft');
+                document.getElementById('select-theme').value = 'sensory-soft';
+                announceScreenReader("Modo Sensorial ativado: Animações reduzidas e tema pastel suave aplicado.");
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('select-theme').value = 'dark';
+                announceScreenReader("Modo Sensorial desativado.");
+            }
+        });
+
+        // Configuração dos Modais
+        const modalA11y = document.getElementById('modal-a11y');
+        const modalShortcuts = document.getElementById('modal-shortcuts');
+
+        document.getElementById('btn-open-a11y').addEventListener('click', () => {
+            modalA11y.classList.remove('hidden');
+            document.getElementById('btn-close-a11y').focus();
+        });
+
+        document.getElementById('btn-close-a11y').addEventListener('click', () => {
+            modalA11y.classList.add('hidden');
+        });
+
+        document.getElementById('btn-open-shortcuts').addEventListener('click', () => {
+            modalShortcuts.classList.remove('hidden');
+            document.getElementById('btn-close-shortcuts').focus();
+        });
+
+        document.getElementById('btn-close-shortcuts').addEventListener('click', () => {
+            modalShortcuts.classList.add('hidden');
+        });
+
+        // Alteração de Tema de Cores (Daltonismo)
+        document.getElementById('select-theme').addEventListener('change', (e) => {
+            const theme = e.target.value;
+            document.documentElement.setAttribute('data-theme', theme);
+            announceScreenReader(`Tema de cores alterado para ${e.target.options[e.target.selectedIndex].text}`);
+        });
+
+        // Alteração do Tamanho do Texto
+        document.getElementById('select-font-size').addEventListener('change', (e) => {
+            const size = e.target.value;
+            document.documentElement.setAttribute('data-font-size', size);
+            announceScreenReader(`Tamanho de texto alterado para ${size}`);
+        });
+
+        // Alteração da Fonte de Dislexia
+        document.getElementById('select-dyslexia').addEventListener('change', (e) => {
+            const isDyslexic = e.target.value === 'true';
+            document.documentElement.setAttribute('data-dyslexic', isDyslexic);
+            announceScreenReader(`Fonte para dislexia ${isDyslexic ? 'ativada' : 'desativada'}`);
+        });
+
+        // Alteração do Tipo de Visualizador
+        document.getElementById('select-visualizer-type').addEventListener('change', (e) => {
+            APP_STATE.visualizerMode = e.target.value;
+            document.getElementById('visualizer-label').textContent = `Visualizador: ${e.target.options[e.target.selectedIndex].text}`;
+            announceScreenReader(`Modo do visualizador alterado`);
+        });
+
+        /* ==========================================================================
+           7. EVENTOS DE REPRODUÇÃO E ATALHOS DE TECLADO GLOBAIS
+           ========================================================================== */
+        const playBtn = document.getElementById('btn-play');
+        const prevBtn = document.getElementById('btn-prev');
+        const nextBtn = document.getElementById('btn-next');
+        const muteBtn = document.getElementById('btn-mute');
+        const volumeSlider = document.getElementById('volume-slider');
+
+        function togglePlayPause() {
+            if (APP_STATE.isPlaying) {
+                audioEngine.stop();
+                announceScreenReader("Música pausada");
+            } else {
+                audioEngine.playTrack(TRACK_DATABASE[APP_STATE.currentTrackIndex]);
+            }
+        }
+
+        playBtn.addEventListener('click', togglePlayPause);
+
+        nextBtn.addEventListener('click', () => {
+            APP_STATE.currentTrackIndex = (APP_STATE.currentTrackIndex + 1) % TRACK_DATABASE.length;
+            updatePlayerTrackUI();
+            audioEngine.playTrack(TRACK_DATABASE[APP_STATE.currentTrackIndex]);
+            renderPlaylist();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            APP_STATE.currentTrackIndex = (APP_STATE.currentTrackIndex - 1 + TRACK_DATABASE.length) % TRACK_DATABASE.length;
+            updatePlayerTrackUI();
+            audioEngine.playTrack(TRACK_DATABASE[APP_STATE.currentTrackIndex]);
+            renderPlaylist();
+        });
+
+        muteBtn.addEventListener('click', () => {
+            APP_STATE.isMuted = !APP_STATE.isMuted;
+            muteBtn.textContent = APP_STATE.isMuted ? '🔇' : '🔊';
+            announceScreenReader(APP_STATE.isMuted ? "Áudio silenciado" : "Áudio reativado");
+        });
+
+        volumeSlider.addEventListener('input', (e) => {
+            APP_STATE.volume = parseFloat(e.target.value);
+            document.getElementById('volume-value-text').textContent = `${Math.round(APP_STATE.volume * 100)}%`;
+        });
+
+        // Eventos dos Filtros de Música
+        document.querySelectorAll('.chip-filter').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('.chip-filter').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                renderPlaylist(chip.getAttribute('data-filter'));
+            });
+        });
+
+        // ATALHOS GLOBAIS DO TECLADO
+        window.addEventListener('keydown', (e) => {
+            // Evita disparar atalhos quando digitando no campo de texto
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT') {
+                return;
+            }
+
+            if (e.code === 'Space') {
+                e.preventDefault();
+                togglePlayPause();
+            } else if (e.key === 'm' || e.key === 'M') {
+                muteBtn.click();
+            } else if (e.key === 'ArrowRight') {
+                nextBtn.click();
+            } else if (e.key === 'ArrowLeft') {
+                prevBtn.click();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                APP_STATE.volume = Math.min(1, APP_STATE.volume + 0.1);
+                volumeSlider.value = APP_STATE.volume;
+                document.getElementById('volume-value-text').textContent = `${Math.round(APP_STATE.volume * 100)}%`;
+                announceScreenReader(`Volume ${Math.round(APP_STATE.volume * 100)} porcento`);
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                APP_STATE.volume = Math.max(0, APP_STATE.volume - 0.1);
+                volumeSlider.value = APP_STATE.volume;
+                document.getElementById('volume-value-text').textContent = `${Math.round(APP_STATE.volume * 100)}%`;
+                announceScreenReader(`Volume ${Math.round(APP_STATE.volume * 100)} porcento`);
+            } else if (e.altKey && (e.key === 'a' || e.key === 'A')) {
+                e.preventDefault();
+                modalA11y.classList.toggle('hidden');
+            } else if (e.shiftKey && e.key === '?') {
+                e.preventDefault();
+                modalShortcuts.classList.toggle('hidden');
+            }
+        });
+
+        /* ==========================================================================
+           8. INICIALIZAÇÃO DA APLICAÇÃO
+           ========================================================================== */
+        window.addEventListener('DOMContentLoaded', () => {
+            renderPlaylist('all');
+            updatePlayerTrackUI();
+            announceScreenReader("Harmonia Acessível pronto. Pressione Barra de Espaço para reproduzir a música.");
+        });
+    </script>
+</body>
+</html>
